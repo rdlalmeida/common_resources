@@ -1,5 +1,5 @@
 /*
-    This interface complements the NonFungibleTokenOnly in the sense that
+    This interface complements the NonFungibleTokenSimple in the sense that
     it implements a Collection resource used to store the NFTs defined in
     that other interface. The idea here is to establish Collections that 
     can store different types of NFTs. Technically, I think I can establish
@@ -14,7 +14,7 @@
 */
 
 // First main difference: this interface needs to import the Token exclusive one to set up the resources and such. This may be a limiting factor. Or not. We shall see...
-import NonFungibleTokenOnly from "./NonFungibleTokenOnly.cdc"
+import NonFungibleTokenSimple from "./NonFungibleTokenSimple.cdc"
 
 pub contract interface NonFungibleTokenCollection {
     /*
@@ -42,10 +42,10 @@ pub contract interface NonFungibleTokenCollection {
     // Time will tell if I'm right
     pub resource interface Provider {
         // Withdraw removes an NFT from the Collection and moves to the calller. NOTE: These functions accept an return an NFT that follows the
-        // NonFungibleTokenOnly interface defined before. Because of the new (and slightly more complicated, I have to assume) paradigm, the id used to retrieve/deposit the NFT
+        // NonFungibleTokenSimple interface defined before. Because of the new (and slightly more complicated, I have to assume) paradigm, the id used to retrieve/deposit the NFT
         // is now a String that needs to conform to whatever id building rules the contract developer establishes. Hopefully all of this can be abstracted in a Smart Contract
         // to prevent regular users from having to build complex Strings just to retrieve an NFT 
-        pub fun withdraw(withdrawID: String): @NonFungibleTokenOnly.NFT {
+        pub fun withdraw(withdrawID: String): @NonFungibleTokenSimple.NFT {
             post {
                 result.id == withdrawID: "The ID of the withdraw token must be the same as the requested ID"
             }
@@ -55,14 +55,14 @@ pub contract interface NonFungibleTokenCollection {
     // Interface to mediate deposits to the Collection
     pub resource interface Receiver {
         // Deposit takes an NFT as an argument as adds it to the Collection. Again, the NFT type does not seems to be relevant so far
-        pub fun deposit(token: @NonFungibleTokenOnly.NFT)
+        pub fun deposit(token: @NonFungibleTokenSimple.NFT)
     }
 
     // Now for the main interface
     pub resource interface CollectionPublic {
-        pub fun deposit(token: @NonFungibleTokenOnly.NFT)
+        pub fun deposit(token: @NonFungibleTokenSimple.NFT)
         pub fun getIDs(): [String]
-        pub fun borrowNFT(id: String): &NonFungibleTokenOnly.NFT
+        pub fun borrowNFT(id: String): &NonFungibleTokenSimple.NFT
     }
 
     /*
@@ -82,20 +82,20 @@ pub contract interface NonFungibleTokenCollection {
     // Requirements for the concrete resource type, adapted to the new isolate NFT interface, to be declared in the implementing contract
     pub resource Collection: Provider, Receiver, CollectionPublic {
         // Dictionary to hold the NFTs in the Collection, again, with nothing that limits the NFT type so far
-        pub var ownedNFTs: @{String: NonFungibleTokenOnly.NFT}
+        pub var ownedNFTs: @{String: NonFungibleTokenSimple.NFT}
 
         // Withdraw removes an NFT, regardless of the type, even though it is somewhat explicit in the id to provide
-        pub fun withdraw(withdrawID: String): @NonFungibleTokenOnly.NFT
+        pub fun withdraw(withdrawID: String): @NonFungibleTokenSimple.NFT
 
         // Deposit takes an NFT and adds it to the Collection dictionary. Any Cadence developer worth his salt should be able to
         // create logic to add the token into the proper position in the dicionary
-        pub fun deposit(token: @NonFungibleTokenOnly.NFT)
+        pub fun deposit(token: @NonFungibleTokenSimple.NFT)
 
         // getIDs returns an array of the IDs that are in the collection. So far is just a simple array with all the NFT types, concatenated with some uuids (hopefully)
         pub fun getIDs(): [String]
 
         // Returns a borrowed reference to an NFT in the Collection so that the caller can read data and call methods from it
-        pub fun borrowNFT(id: String): &NonFungibleTokenOnly.NFT {
+        pub fun borrowNFT(id: String): &NonFungibleTokenSimple.NFT {
             pre {
                 self.ownedNFTs[id] != nil: "NFT with id '".concat(id).concat("' does not exists in the Collection!")
             }
