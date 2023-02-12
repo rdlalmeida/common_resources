@@ -1,5 +1,5 @@
 /*
-    This interface implements the rules to define NFTs only. There are no Collections set at this point. These should be set in a different contract
+    This interface implements the rules to define NFTs only. There are no Collections set at this point. These should be set in a different interface
     @rdlalmeida 07/02/2023
 */
 pub contract interface NonFungibleTokenSimple {

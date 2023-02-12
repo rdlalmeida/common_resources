@@ -38,10 +38,23 @@ pub contract interface NonFungibleTokenCollection {
     // Event for when a token is deposited, with the id switched to a String as before.
     pub event Deposit(id: String, to: Address?)
 
+    // Event for when a given token type was incremented in the Collection's tokenTypeCount
+    pub event TokenTypeAdded(tokenType: Type, count: Int)
+
+    // Event for when a given token type was decremented in the Collection's tokenTypeCount
+    pub event TokenTypeRemoved(tokenType: Type, count: Int)
+
+    // Event for when a user tries to remove an tokenID from an inexistent tokenType entry
+    pub event InexistentTokenType(tokenType: Type)
+
+    // Event for when a user tries to remove an inexistent tokenID from an existent tokenType, i.e., the dictionary entry is there but the corresponding
+    // array does not have the tokenID to remove
+    pub event InexistentTokenID(tokenType: Type, tokenID: String)
+
     // Now for the Provider and Receiver interfaces. In this case, they are pretty much the same as the original ones. The deposit and retrival is type independent, in principle.
     // Time will tell if I'm right
     pub resource interface Provider {
-        // Withdraw removes an NFT from the Collection and moves to the calller. NOTE: These functions accept an return an NFT that follows the
+        // Withdraw removes an NFT from the Collection and moves to the caller. NOTE: These functions accept an return an NFT that follows the
         // NonFungibleTokenSimple interface defined before. Because of the new (and slightly more complicated, I have to assume) paradigm, the id used to retrieve/deposit the NFT
         // is now a String that needs to conform to whatever id building rules the contract developer establishes. Hopefully all of this can be abstracted in a Smart Contract
         // to prevent regular users from having to build complex Strings just to retrieve an NFT 
@@ -65,30 +78,37 @@ pub contract interface NonFungibleTokenCollection {
         pub fun borrowNFT(id: String): &NonFungibleTokenSimple.NFT
     }
 
-    /*
-        TODO 1: Create a function to retrieve an array of Strings with all the NFT types identified in the Collection:
-            getAllNFTTypes(): [String]
-
-        TODO 2: Create a function to retrive histogram data regarding the number of NFTs per type in the Collection:
-            getNFTHistogram(): {String: UInt64}, where:
-                String - NFT type, as a String obviously
-                UInt64 - Number of NFTs counted in the Collection for that type
-        
-        TODO 3: Shall I add a new dictionary to this contract to keep track of how many NFT this collection has per type?
-        The Deposit function becomes a bit more complicated, but it seems a good idea and simplifies greatly the previous TODO.
-            Think about it Ricardo!
-    */
-
     // Requirements for the concrete resource type, adapted to the new isolate NFT interface, to be declared in the implementing contract
     pub resource Collection: Provider, Receiver, CollectionPublic {
         // Dictionary to hold the NFTs in the Collection, again, with nothing that limits the NFT type so far
         pub var ownedNFTs: @{String: NonFungibleTokenSimple.NFT}
 
+        // This dictionary is going to be used to keep track of how many NFTs exist in the Collection per Type. The dictionary key is the
+        // result of token.getType() and the value is an array of Strings that keeps track of the token IDs per token Type
+        pub var tokenTypeCount: {Type: [String]}
+
+        // In order to maintain this token type dictionary, I need a set of support functions to create, add and remove elements to it
+        // This function adds a tokenID to the tokenType entry array or initializes one with the provided tokenID if it does not exists yet. 
+        // This function should be used whenever a token is deposited (added) to the Collection
+        pub fun addTokenType(tokenType: Type, tokenId: String)
+
+        // In opposition, this function removes the provided token ID from the associated tokenType entry in the dictionary. If the array value becomes
+        // empty, the function removes the entry from the dictionary
+        // This function should be called in every withdraw
+        pub fun removeTokenType(tokenType: Type, tokenId: String)
+
+        // And the typical function used to get all tokenTypes, a version of the getIDs() one, useful to cycle through all the elements of the Collection
+        pub fun getAllTokenTypes(): [Type]
+
+        // And a corresponding function to retrieve the array of tokenIds for a provided tokenType. The output is optional in case the tokeType entry does
+        // not exists
+        pub fun getAllTokenIDs(tokenType: Type): [String]?
+
         // Withdraw removes an NFT, regardless of the type, even though it is somewhat explicit in the id to provide
         pub fun withdraw(withdrawID: String): @NonFungibleTokenSimple.NFT
 
         // Deposit takes an NFT and adds it to the Collection dictionary. Any Cadence developer worth his salt should be able to
-        // create logic to add the token into the proper position in the dicionary
+        // create logic to add the token into the proper position in the dictionary
         pub fun deposit(token: @NonFungibleTokenSimple.NFT)
 
         // getIDs returns an array of the IDs that are in the collection. So far is just a simple array with all the NFT types, concatenated with some uuids (hopefully)
