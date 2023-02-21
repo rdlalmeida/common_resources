@@ -31,7 +31,7 @@ transaction(publicKey: String) {
         is an easy way to deal with this
     */
     prepare(signer: AuthAccount) {
-        let pub_key = PublicKey(
+        let pub_key: PublicKey = PublicKey(
             /*
                 The publicKey is provided to the transaction as a String but this instruction requires an array of UInt8 ([UInt8]). It is much
                 more easy to get the key as String, therefore it is necessary to convert it to the [UInt8] required. The decodeHex() instruction
@@ -47,7 +47,7 @@ transaction(publicKey: String) {
             Create a bare account. Notice how the AuthAccount object is used to create this new "object" (I think...) but it requires a signer
             with enough funds to pay for the gas costs as argument.
         */
-        let newAccount = AuthAccount(payer: signer)
+        let newAccount: AuthAccount = AuthAccount(payer: signer)
 
         // This is a bit redundant and it serves just to ensure that I get the address of the account created somewhere (it should be set in
         // transaction's output too)

@@ -130,3 +130,4 @@ pub contract interface NonFungibleTokenCollection {
     }
 
 }
+ 
