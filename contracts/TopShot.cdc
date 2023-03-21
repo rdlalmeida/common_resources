@@ -1,62 +1,70 @@
- /*
+/*
     Description: Central Smart Contract for NBA TopShot
+
     This smart contract contains the core functionality for 
     NBA Top Shot, created by Dapper Labs
+
     The contract manages the data associated with all the plays and sets
     that are used as templates for the Moment NFTs
+
     When a new Play wants to be added to the records, an Admin creates
     a new Play struct that is stored in the smart contract.
+
     Then an Admin can create new Sets. Sets consist of a public struct that 
     contains public information about a set, and a private resource used
     to mint new moments based off of plays that have been linked to the Set.
+
     The admin resource has the power to do all of the important actions
     in the smart contract. When admins want to call functions in a set,
     they call their borrowSet function to get a reference 
     to a set in the contract. Then, they can call functions on the set using that reference.
+
     In this way, the smart contract and its defined resources interact 
     with great teamwork, just like the Indiana Pacers, the greatest NBA team
     of all time.
     
     When moments are minted, they are initialized with a MomentData struct and
     are returned by the minter.
+
     The contract also defines a Collection resource. This is an object that 
     every TopShot NFT owner will store in their account
     to manage their NFT collection.
+
     The main Top Shot account will also have its own Moment collections
     it can use to hold its own moments that have not yet been sent to a user.
+
     Note: All state changing functions will panic if an invalid argument is
     provided or one of its pre-conditions or post conditions aren't met.
     Functions that don't modify state will simply return 0 or nil 
     and those cases need to be handled by the caller.
+
     It is also important to remember that 
     The Golden State Warriors blew a 3-1 lead in the 2016 NBA finals.
+
 */
 
-// import FungibleToken from 0xFUNGIBLETOKENADDRESS
-// import NonFungibleToken from 0xNFTADDRESS
-// import MetadataViews from 0xMETADATAVIEWSADDRESS
-// import TopShotLocking from 0xTOPSHOTLOCKINGADDRESS
-
+// import FungibleToken from 0xf233dcee88fe0abe
 import FungibleToken from "./FungibleToken.cdc"
+
+// import NonFungibleToken from 0x1d7e57aa55817448
 import NonFungibleToken from "./NonFungibleToken.cdc"
+
+// import MetadataViews from 0x1d7e57aa55817448
 import MetadataViews from "./MetadataViews.cdc"
+
+// import TopShotLocking from 0x0b2a3299cc857e29
 import TopShotLocking from "./TopShotLocking.cdc"
 
 pub contract TopShot: NonFungibleToken {
     // -----------------------------------------------------------------------
     // TopShot deployment variables
     // -----------------------------------------------------------------------
+
     // The network the contract is deployed on
-    // pub fun Network() : String { return ${NETWORK} }
-    pub fun Network(): String {
-        return "testnet"
-    }
+    pub fun Network() : String { return "mainnet" }
 
     // The address to which royalties should be deposited
-    // pub fun RoyaltyAddress() : Address { return 0xTOPSHOTROYALTYADDRESS }
-    pub fun RoyaltyAddress(): Address {
-        return 0x01
-    }
+    pub fun RoyaltyAddress() : Address { return 0xfaf0cc52c6e3acaf }
 
     // The path to the Subedition Admin resource belonging to the Account
     // which the contract is deployed on
@@ -65,6 +73,7 @@ pub contract TopShot: NonFungibleToken {
     // -----------------------------------------------------------------------
     // TopShot contract Events
     // -----------------------------------------------------------------------
+
     // Emitted when the TopShot contract is created
     pub event ContractInitialized()
 
@@ -106,6 +115,7 @@ pub contract TopShot: NonFungibleToken {
     // TopShot contract-level fields.
     // These contain actual values that are stored in the smart contract.
     // -----------------------------------------------------------------------
+
     // Series that this Set belongs to.
     // Series is a concept that indicates a group of Sets through time.
     // Many Sets can exist at a time, but only one series.
@@ -143,6 +153,7 @@ pub contract TopShot: NonFungibleToken {
     // actual stored values, but an instance (or object) of one of these Types
     // can be created by this contract that contains stored values.
     // -----------------------------------------------------------------------
+
     // Play is a Struct that holds metadata associated 
     // with a specific NBA play, like the legendary moment when 
     // Ray Allen hit the 3 to tie the Heat and Spurs in the 2013 finals game 6
@@ -373,7 +384,7 @@ pub contract TopShot: NonFungibleToken {
 
             // Gets the number of Moments that have been minted for this Play
             // to use as this Moment's serial number
-            let numInPlay: UInt32 = self.numberMintedPerPlay[playID]!
+            let numInPlay = self.numberMintedPerPlay[playID]!
 
             // Mint the new moment
             let newMoment: @NFT <- create NFT(serialNumber: numInPlay + UInt32(1),
@@ -396,7 +407,7 @@ pub contract TopShot: NonFungibleToken {
         // Returns: Collection object that contains all the Moments that were minted
         //
         pub fun batchMintMoment(playID: UInt32, quantity: UInt64): @Collection {
-            let newCollection: @TopShot.Collection <- create Collection()
+            let newCollection <- create Collection()
 
             var i: UInt64 = 0
             while i < quantity {
@@ -425,10 +436,10 @@ pub contract TopShot: NonFungibleToken {
 
             // Gets the number of Moments that have been minted for this subedition
             // to use as this Moment's serial number
-            let subeditionRef: &TopShot.SubeditionAdmin = TopShot.account.borrow<&SubeditionAdmin>(from: TopShot.SubeditionAdminStoragePath())
+            let subeditionRef = TopShot.account.borrow<&SubeditionAdmin>(from: TopShot.SubeditionAdminStoragePath())
             ?? panic("No subedition admin resource in storage")
 
-            let numInSubedition: UInt32 = subeditionRef.getNumberMintedPerSubedition(setID: self.setID,
+            let numInSubedition = subeditionRef.getNumberMintedPerSubedition(setID: self.setID,
                                                                              playID: playID,
                                                                              subeditionID: subeditionID)
 
@@ -460,7 +471,7 @@ pub contract TopShot: NonFungibleToken {
         // Returns: Collection object that contains all the Moments that were minted
         //
          pub fun batchMintMomentWithSubedition(playID: UInt32, quantity: UInt64, subeditionID: UInt32): @Collection {
-            let newCollection: @TopShot.Collection <- create Collection()
+            let newCollection <- create Collection()
 
             var i: UInt64 = 0
             while i < quantity {
@@ -504,8 +515,8 @@ pub contract TopShot: NonFungibleToken {
                 TopShot.sets[setID] != nil: "The set with the provided ID does not exist"
             }
 
-            let set: &TopShot.Set = (&TopShot.sets[setID] as &Set?)!
-            let setData: TopShot.SetData = TopShot.setDatas[setID]!
+            let set = (&TopShot.sets[setID] as &Set?)!
+            let setData = TopShot.setDatas[setID]!
 
             self.setID = setID
             self.name = setData.name
@@ -771,9 +782,9 @@ pub contract TopShot: NonFungibleToken {
                         numMomentsInEdition: TopShot.getNumMomentsInEdition(setID: self.data.setID, playID: self.data.playID)
                     )
                 case Type<MetadataViews.Editions>():
-                    let name: String = self.getEditionName()
-                    let max: UInt32 = TopShot.getNumMomentsInEdition(setID: self.data.setID, playID: self.data.playID) ?? 0
-                    let editionInfo: MetadataViews.Edition = MetadataViews.Edition(name: name, number: UInt64(self.data.serialNumber), max: max > 0 ? UInt64(max) : nil)
+                    let name = self.getEditionName()
+                    let max = TopShot.getNumMomentsInEdition(setID: self.data.setID, playID: self.data.playID) ?? 0
+                    let editionInfo = MetadataViews.Edition(name: name, number: UInt64(self.data.serialNumber), max: max > 0 ? UInt64(max) : nil)
                     let editionList: [MetadataViews.Edition] = [editionInfo]
                     return MetadataViews.Editions(
                         editionList
@@ -809,13 +820,13 @@ pub contract TopShot: NonFungibleToken {
                         })
                     )
                 case Type<MetadataViews.NFTCollectionDisplay>():
-                    let bannerImage: MetadataViews.Media = MetadataViews.Media(
+                    let bannerImage = MetadataViews.Media(
                         file: MetadataViews.HTTPFile(
                             url: "https://nbatopshot.com/static/img/top-shot-logo-horizontal-white.svg"
                         ),
                         mediaType: "image/svg+xml"
                     )
-                    let squareImage: MetadataViews.Media = MetadataViews.Media(
+                    let squareImage = MetadataViews.Media(
                         file: MetadataViews.HTTPFile(
                             url: "https://nbatopshot.com/static/img/og/og.png"
                         ),
@@ -843,7 +854,7 @@ pub contract TopShot: NonFungibleToken {
                         "SerialNumber": self.data.serialNumber
                     }
                     // add play specific data
-                    let fullDictionary: {String: AnyStruct} = self.mapPlayData(dict: traitDictionary)
+                    let fullDictionary = self.mapPlayData(dict: traitDictionary)
                     return MetadataViews.dictToTraits(dict: fullDictionary, excludedNames: excludedNames)
                 case Type<MetadataViews.Medias>():
                     return MetadataViews.Medias(
@@ -868,12 +879,13 @@ pub contract TopShot: NonFungibleToken {
         }   
 
         // Functions used for computing MetadataViews 
+
         // mapPlayData helps build our trait map from play metadata
         // Returns: The trait map with all non-empty fields from play data added
         pub fun mapPlayData(dict: {String: AnyStruct}) : {String: AnyStruct} {      
-            let playMetadata: {String: String} = TopShot.getPlayMetaData(playID: self.data.playID) ?? {}
+            let playMetadata = TopShot.getPlayMetaData(playID: self.data.playID) ?? {}
             for name in playMetadata.keys {
-                let value: String = playMetadata[name] ?? ""
+                let value = playMetadata[name] ?? ""
                 if value != "" {
                     dict.insert(key: name, value)
                 }
@@ -890,7 +902,7 @@ pub contract TopShot: NonFungibleToken {
         // `setName: #playID`
         pub fun getEditionName() : String {
             let setName: String = TopShot.getSetName(setID: self.data.setID) ?? ""
-            let editionName: String = setName.concat(": #").concat(self.data.playID.toString())
+            let editionName = setName.concat(": #").concat(self.data.playID.toString())
             return editionName
         }
 
@@ -900,19 +912,19 @@ pub contract TopShot: NonFungibleToken {
 
         // returns a url to display an medium sized image
         pub fun mediumimage(): String {
-            let url: String = self.assetPath().concat("?width=512")
+            let url = self.assetPath().concat("?width=512")
             return self.appendOptionalParams(url: url, firstDelim: "&")
         }
 
         // a url to display a thumbnail associated with the moment
         pub fun thumbnail(): String {
-            let url: String = self.assetPath().concat("?width=256")
+            let url = self.assetPath().concat("?width=256")
             return self.appendOptionalParams(url: url, firstDelim: "&")
         }
 
         // a url to display a video associated with the moment
         pub fun video(): String {
-            let url: String = self.assetPath().concat("/video")
+            let url = self.assetPath().concat("/video")
             return self.appendOptionalParams(url: url, firstDelim: "?")
         }
 
@@ -942,8 +954,8 @@ pub contract TopShot: NonFungibleToken {
         //
         pub fun createPlay(metadata: {String: String}): UInt32 {
             // Create the new Play
-            var newPlay: TopShot.Play = Play(metadata: metadata)
-            let newID: UInt32 = newPlay.playID
+            var newPlay = Play(metadata: metadata)
+            let newID = newPlay.playID
 
             // Increment the ID so that it isn't used again
             TopShot.nextPlayID = TopShot.nextPlayID + UInt32(1)
@@ -961,7 +973,7 @@ pub contract TopShot: NonFungibleToken {
         ///             tagline: A string to be used as the tagline for the play
         /// Returns: The ID of the play
         pub fun updatePlayTagline(playID: UInt32, tagline: String): UInt32 {
-            let tmpPlay: TopShot.Play = TopShot.playDatas[playID] ?? panic("playID does not exist")
+            let tmpPlay = TopShot.playDatas[playID] ?? panic("playID does not exist")
             tmpPlay.updateTagline(tagline: tagline)
             return playID
         }
@@ -975,12 +987,12 @@ pub contract TopShot: NonFungibleToken {
         pub fun createSet(name: String): UInt32 {
 
             // Create the new Set
-            var newSet: @TopShot.Set <- create Set(name: name)
+            var newSet <- create Set(name: name)
 
             // Increment the setID so that it isn't used again
             TopShot.nextSetID = TopShot.nextSetID + UInt32(1)
 
-            let newID: UInt32 = newSet.setID
+            let newID = newSet.setID
 
             emit SetCreated(setID: newSet.setID, series: TopShot.currentSeries)
 
@@ -1039,7 +1051,7 @@ pub contract TopShot: NonFungibleToken {
         //             playID: The ID of the Play that the Moment references
         //
         pub fun setMomentsSubedition(nftID: UInt64, subeditionID: UInt32, setID: UInt32, playID: UInt32) {
-            let subeditionAdmin: &TopShot.SubeditionAdmin = TopShot.account.borrow<&SubeditionAdmin>(from: TopShot.SubeditionAdminStoragePath())
+            let subeditionAdmin = TopShot.account.borrow<&SubeditionAdmin>(from: TopShot.SubeditionAdminStoragePath())
                 ?? panic("No subedition admin resource in storage")
 
             subeditionAdmin.setMomentsSubedition(nftID: nftID, subeditionID: subeditionID, setID: setID, playID: playID)
@@ -1054,7 +1066,7 @@ pub contract TopShot: NonFungibleToken {
         // Returns: the ID of the new Subedition object
         //
         pub fun createSubedition(name:String, metadata:{String:String}): UInt32 {
-            let subeditionAdmin: &TopShot.SubeditionAdmin = TopShot.account.borrow<&SubeditionAdmin>(from: TopShot.SubeditionAdminStoragePath())
+            let subeditionAdmin = TopShot.account.borrow<&SubeditionAdmin>(from: TopShot.SubeditionAdminStoragePath())
                 ?? panic("No subedition admin resource in storage")
 
             return subeditionAdmin.createSubedition(name:name, metadata:metadata)
@@ -1106,13 +1118,13 @@ pub contract TopShot: NonFungibleToken {
         pub fun withdraw(withdrawID: UInt64): @NonFungibleToken.NFT {
 
             // Borrow nft and check if locked
-            let nft: &NonFungibleToken.NFT = self.borrowNFT(id: withdrawID)
+            let nft = self.borrowNFT(id: withdrawID)
             if TopShotLocking.isLocked(nftRef: nft) {
                 panic("Cannot withdraw: Moment is locked")
             }
 
             // Remove the nft from the Collection
-            let token: @NonFungibleToken.NFT <- self.ownedNFTs.remove(key: withdrawID) 
+            let token <- self.ownedNFTs.remove(key: withdrawID) 
                 ?? panic("Cannot withdraw: Moment does not exist in the collection")
 
             emit Withdraw(id: token.id, from: self.owner?.address)
@@ -1130,7 +1142,7 @@ pub contract TopShot: NonFungibleToken {
         //
         pub fun batchWithdraw(ids: [UInt64]): @NonFungibleToken.Collection {
             // Create a new empty Collection
-            var batchCollection: @TopShot.Collection <- create Collection()
+            var batchCollection <- create Collection()
             
             // Iterate through the ids and withdraw them from the Collection
             for id in ids {
@@ -1149,13 +1161,13 @@ pub contract TopShot: NonFungibleToken {
             
             // Cast the deposited token as a TopShot NFT to make sure
             // it is the correct type
-            let token: @TopShot.NFT <- token as! @TopShot.NFT
+            let token <- token as! @TopShot.NFT
 
             // Get the token's ID
-            let id: UInt64 = token.id
+            let id = token.id
 
             // Add the new token to the dictionary
-            let oldToken: @NonFungibleToken.NFT? <- self.ownedNFTs[id] <- token
+            let oldToken <- self.ownedNFTs[id] <- token
 
             // Only emit a deposit event if the Collection 
             // is in an account's storage
@@ -1172,7 +1184,7 @@ pub contract TopShot: NonFungibleToken {
         pub fun batchDeposit(tokens: @NonFungibleToken.Collection) {
 
             // Get an array of the IDs to be deposited
-            let keys: [UInt64] = tokens.getIDs()
+            let keys = tokens.getIDs()
 
             // Iterate through the keys in the collection and deposit each one
             for key in keys {
@@ -1187,12 +1199,12 @@ pub contract TopShot: NonFungibleToken {
         // the moment for that duration
         pub fun lock(id: UInt64, duration: UFix64) {
             // Remove the nft from the Collection
-            let token: @NonFungibleToken.NFT <- self.ownedNFTs.remove(key: id) 
+            let token <- self.ownedNFTs.remove(key: id) 
                 ?? panic("Cannot lock: Moment does not exist in the collection")
 
             // pass the token to the locking contract
             // store it again after it comes back
-            let oldToken: @NonFungibleToken.NFT? <- self.ownedNFTs[id] <- TopShotLocking.lockNFT(nft: <- token, duration: duration)
+            let oldToken <- self.ownedNFTs[id] <- TopShotLocking.lockNFT(nft: <- token, duration: duration)
 
             destroy oldToken
         }
@@ -1210,12 +1222,12 @@ pub contract TopShot: NonFungibleToken {
         // TopShotLocking.unlockNFT contains business logic around unlock eligibility
         pub fun unlock(id: UInt64) {
             // Remove the nft from the Collection
-            let token: @NonFungibleToken.NFT? <- self.ownedNFTs.remove(key: id) 
+            let token <- self.ownedNFTs.remove(key: id) 
                 ?? panic("Cannot lock: Moment does not exist in the collection")
 
             // Pass the token to the TopShotLocking contract then get it back
             // Store it back to the ownedNFTs dictionary
-            let oldToken: @NonFungibleToken.NFT? <- self.ownedNFTs[id] <- TopShotLocking.unlockNFT(nft: <- token!)
+            let oldToken <- self.ownedNFTs[id] <- TopShotLocking.unlockNFT(nft: <- token)
 
             destroy oldToken
         }
@@ -1261,7 +1273,7 @@ pub contract TopShot: NonFungibleToken {
         // Returns: A reference to the NFT
         pub fun borrowMoment(id: UInt64): &TopShot.NFT? {
             if self.ownedNFTs[id] != nil {
-                let ref: auth &NonFungibleToken.NFT = (&self.ownedNFTs[id] as auth &NonFungibleToken.NFT?)!
+                let ref = (&self.ownedNFTs[id] as auth &NonFungibleToken.NFT?)!
                 return ref as! &TopShot.NFT
             } else {
                 return nil
@@ -1269,8 +1281,8 @@ pub contract TopShot: NonFungibleToken {
         }
 
         pub fun borrowViewResolver(id: UInt64): &AnyResource{MetadataViews.Resolver} {
-            let nft: auth &NonFungibleToken.NFT = (&self.ownedNFTs[id] as auth &NonFungibleToken.NFT?)! 
-            let topShotNFT: &TopShot.NFT = nft as! &TopShot.NFT
+            let nft = (&self.ownedNFTs[id] as auth &NonFungibleToken.NFT?)! 
+            let topShotNFT = nft as! &TopShot.NFT
             return topShotNFT as &AnyResource{MetadataViews.Resolver}
         }
 
@@ -1287,6 +1299,7 @@ pub contract TopShot: NonFungibleToken {
     // -----------------------------------------------------------------------
     // TopShot contract-level function definitions
     // -----------------------------------------------------------------------
+
     // createEmptyCollection creates a new, empty Collection object so that
     // a user can store it in their account storage.
     // Once they have a Collection in their storage, they are able to receive
@@ -1323,7 +1336,7 @@ pub contract TopShot: NonFungibleToken {
     // Returns: The metadata field as a String Optional
     pub fun getPlayMetaDataByField(playID: UInt32, field: String): String? {
         // Don't force a revert if the playID or field is invalid
-        if let play: TopShot.Play = TopShot.playDatas[playID] {
+        if let play = TopShot.playDatas[playID] {
             return play.metadata[field]
         } else {
             return nil
@@ -1413,10 +1426,10 @@ pub contract TopShot: NonFungibleToken {
     // Returns: Boolean indicating if the edition is retired or not
     pub fun isEditionRetired(setID: UInt32, playID: UInt32): Bool? {
 
-        if let setdata: TopShot.QuerySetData = self.getSetData(setID: setID) {
+        if let setdata = self.getSetData(setID: setID) {
 
             // See if the Play is retired from this Set
-            let retired: Bool? = setdata.getRetired()[playID]
+            let retired = setdata.getRetired()[playID]
 
             // Return the retired status
             return retired
@@ -1449,10 +1462,10 @@ pub contract TopShot: NonFungibleToken {
     // Returns: The total number of Moments 
     //          that have been minted from an edition
     pub fun getNumMomentsInEdition(setID: UInt32, playID: UInt32): UInt32? {
-        if let setdata: TopShot.QuerySetData = self.getSetData(setID: setID) {
+        if let setdata = self.getSetData(setID: setID) {
 
             // Read the numMintedPerPlay
-            let amount: UInt32? = setdata.getNumberMintedPerPlay()[playID]
+            let amount = setdata.getNumberMintedPerPlay()[playID]
 
             return amount
         } else {
@@ -1468,7 +1481,7 @@ pub contract TopShot: NonFungibleToken {
     // returns: UInt32? Subedition's ID if exists
     //
     pub fun getMomentsSubedition(nftID: UInt64):UInt32? {
-        let subeditionAdmin: &TopShot.SubeditionAdmin = self.account.borrow<&SubeditionAdmin>(from: TopShot.SubeditionAdminStoragePath())
+        let subeditionAdmin = self.account.borrow<&SubeditionAdmin>(from: TopShot.SubeditionAdminStoragePath())
             ?? panic("No subedition admin resource in storage")
 
         return subeditionAdmin.getMomentsSubedition(nftID: nftID)
@@ -1478,7 +1491,7 @@ pub contract TopShot: NonFungibleToken {
     //
     // Returns: An array of all the subeditions that have been created
     pub fun getAllSubeditions():[TopShot.Subedition] {
-        let subeditionAdmin: &TopShot.SubeditionAdmin = self.account.borrow<&SubeditionAdmin>(from: TopShot.SubeditionAdminStoragePath())
+        let subeditionAdmin = self.account.borrow<&SubeditionAdmin>(from: TopShot.SubeditionAdminStoragePath())
             ?? panic("No subedition admin resource in storage")
         return subeditionAdmin.subeditionDatas.values
     }
@@ -1489,7 +1502,7 @@ pub contract TopShot: NonFungibleToken {
     //
     // Returns: The Subedition struct
     pub fun getSubeditionByID(subeditionID: UInt32):TopShot.Subedition {
-        let subeditionAdmin: &TopShot.SubeditionAdmin = self.account.borrow<&SubeditionAdmin>(from: TopShot.SubeditionAdminStoragePath())
+        let subeditionAdmin = self.account.borrow<&SubeditionAdmin>(from: TopShot.SubeditionAdminStoragePath())
             ?? panic("No subedition admin resource in storage")
         return subeditionAdmin.subeditionDatas[subeditionID]!
     }
@@ -1500,7 +1513,7 @@ pub contract TopShot: NonFungibleToken {
     // Returns: UInt32
     // the next number in nextSubeditionID from the SubeditionAdmin resource
     pub fun getNextSubeditionID():UInt32 {
-        let subeditionAdmin: &TopShot.SubeditionAdmin = self.account.borrow<&SubeditionAdmin>(from: TopShot.SubeditionAdminStoragePath())
+        let subeditionAdmin = self.account.borrow<&SubeditionAdmin>(from: TopShot.SubeditionAdminStoragePath())
             ?? panic("No subedition admin resource in storage")
         return subeditionAdmin.nextSubeditionID
     }
@@ -1553,9 +1566,9 @@ pub contract TopShot: NonFungibleToken {
         //
         pub fun createSubedition(name:String, metadata:{String:String}): UInt32 {
 
-            let newID: UInt32 = self.nextSubeditionID
+            let newID = self.nextSubeditionID
 
-            var newSubedition: TopShot.Subedition = Subedition(subeditionID: newID, name: name, metadata: metadata)
+            var newSubedition = Subedition(subeditionID: newID, name: name, metadata: metadata)
 
             self.nextSubeditionID = self.nextSubeditionID + UInt32(1)
 
@@ -1587,7 +1600,7 @@ pub contract TopShot: NonFungibleToken {
         // returns: UInt32 Number of Moments, already minted for this Subedition
         //
         pub fun getNumberMintedPerSubedition(setID: UInt32, playID: UInt32, subeditionID: UInt32): UInt32 {
-           let setPlaySubedition: String = setID.toString().concat(playID.toString()).concat(subeditionID.toString())
+           let setPlaySubedition = setID.toString().concat(playID.toString()).concat(subeditionID.toString())
            if !self.numberMintedPerSubedition.containsKey(setPlaySubedition) {
                 self.numberMintedPerSubedition.insert(key: setPlaySubedition,UInt32(0))
                 return UInt32(0)
@@ -1604,7 +1617,7 @@ pub contract TopShot: NonFungibleToken {
         //
         //
         pub fun addToNumberMintedPerSubedition(setID: UInt32, playID: UInt32, subeditionID: UInt32) {
-           let setPlaySubedition: String = setID.toString().concat(playID.toString()).concat(subeditionID.toString())
+           let setPlaySubedition = setID.toString().concat(playID.toString()).concat(subeditionID.toString())
 
            if !self.numberMintedPerSubedition.containsKey(setPlaySubedition) {
              panic("Could not find specified Subedition!")
@@ -1665,4 +1678,3 @@ pub contract TopShot: NonFungibleToken {
         emit ContractInitialized()
     }
 }
- 

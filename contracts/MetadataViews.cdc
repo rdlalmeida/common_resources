@@ -1,5 +1,3 @@
-// Local copy of the main MetadataViews.cdc contract currently stored in Flow account 0x1d7e57aa55817448
-
 // import FungibleToken from 0xf233dcee88fe0abe
 import FungibleToken from "./FungibleToken.cdc"
 
@@ -76,7 +74,7 @@ pub contract MetadataViews {
     /// @return A NFTView struct
     ///
     pub fun getNFTView(id: UInt64, viewResolver: &{Resolver}) : NFTView {
-        let nftView: AnyStruct? = viewResolver.resolveView(Type<NFTView>())
+        let nftView = viewResolver.resolveView(Type<NFTView>())
         if nftView != nil {
             return nftView! as! NFTView
         }
@@ -136,8 +134,8 @@ pub contract MetadataViews {
     /// @return An optional Display struct
     ///
     pub fun getDisplay(_ viewResolver: &{Resolver}) : Display? {
-        if let view: AnyStruct = viewResolver.resolveView(Type<Display>()) {
-            if let v: MetadataViews.Display = view as? Display {
+        if let view = viewResolver.resolveView(Type<Display>()) {
+            if let v = view as? Display {
                 return v
             }
         }
@@ -197,7 +195,7 @@ pub contract MetadataViews {
         /// @return The string containing the file uri
         ///
         pub fun uri(): String {
-            if let path: String = self.path {
+            if let path = self.path {
                 return "ipfs://".concat(self.cid).concat("/").concat(path)
             }
 
@@ -258,8 +256,8 @@ pub contract MetadataViews {
     /// @return An optional Editions struct
     ///
     pub fun getEditions(_ viewResolver: &{Resolver}) : Editions? {
-        if let view: AnyStruct = viewResolver.resolveView(Type<Editions>()) {
-            if let v: MetadataViews.Editions = view as? Editions {
+        if let view = viewResolver.resolveView(Type<Editions>()) {
+            if let v = view as? Editions {
                 return v
             }
         }
@@ -286,8 +284,8 @@ pub contract MetadataViews {
     /// @return An optional Serial struct
     ///
     pub fun getSerial(_ viewResolver: &{Resolver}) : Serial? {
-        if let view: AnyStruct = viewResolver.resolveView(Type<Serial>()) {
-            if let v: MetadataViews.Serial = view as? Serial {
+        if let view = viewResolver.resolveView(Type<Serial>()) {
+            if let v = view as? Serial {
                 return v
             }
         }
@@ -344,7 +342,7 @@ pub contract MetadataViews {
 
         pub init(_ cutInfos: [Royalty]) {
             // Validate that sum of all cut multipliers should not be greater than 1.0
-            var totalCut: UFix64 = 0.0
+            var totalCut = 0.0
             for royalty in cutInfos {
                 totalCut = totalCut + royalty.cut
             }
@@ -368,8 +366,8 @@ pub contract MetadataViews {
     /// @return A optional Royalties struct
     ///
     pub fun getRoyalties(_ viewResolver: &{Resolver}) : Royalties? {
-        if let view: AnyStruct = viewResolver.resolveView(Type<Royalties>()) {
-            if let v: MetadataViews.Royalties = view as? Royalties {
+        if let view = viewResolver.resolveView(Type<Royalties>()) {
+            if let v = view as? Royalties {
                 return v
             }
         }
@@ -423,8 +421,8 @@ pub contract MetadataViews {
     /// @return A optional Medias struct
     ///
     pub fun getMedias(_ viewResolver: &{Resolver}) : Medias? {
-        if let view: AnyStruct = viewResolver.resolveView(Type<Medias>()) {
-            if let v: MetadataViews.Medias = view as? Medias {
+        if let view = viewResolver.resolveView(Type<Medias>()) {
+            if let v = view as? Medias {
                 return v
             }
         }
@@ -448,8 +446,8 @@ pub contract MetadataViews {
     /// @return A optional License struct
     ///
     pub fun getLicense(_ viewResolver: &{Resolver}) : License? {
-        if let view: AnyStruct = viewResolver.resolveView(Type<License>()) {
-            if let v: MetadataViews.License = view as? License {
+        if let view = viewResolver.resolveView(Type<License>()) {
+            if let v = view as? License {
                 return v
             }
         }
@@ -474,8 +472,8 @@ pub contract MetadataViews {
     /// @return A optional ExternalURL struct
     ///
     pub fun getExternalURL(_ viewResolver: &{Resolver}) : ExternalURL? {
-        if let view: AnyStruct = viewResolver.resolveView(Type<ExternalURL>()) {
-            if let v: MetadataViews.ExternalURL = view as? ExternalURL {
+        if let view = viewResolver.resolveView(Type<ExternalURL>()) {
+            if let v = view as? ExternalURL {
                 return v
             }
         }
@@ -547,8 +545,8 @@ pub contract MetadataViews {
     /// @return A optional NFTCollectionData struct
     ///
     pub fun getNFTCollectionData(_ viewResolver: &{Resolver}) : NFTCollectionData? {
-        if let view: AnyStruct = viewResolver.resolveView(Type<NFTCollectionData>()) {
-            if let v: MetadataViews.NFTCollectionData = view as? NFTCollectionData {
+        if let view = viewResolver.resolveView(Type<NFTCollectionData>()) {
+            if let v = view as? NFTCollectionData {
                 return v
             }
         }
@@ -603,8 +601,8 @@ pub contract MetadataViews {
     /// @return A optional NFTCollection struct
     ///
     pub fun getNFTCollectionDisplay(_ viewResolver: &{Resolver}) : NFTCollectionDisplay? {
-        if let view: AnyStruct = viewResolver.resolveView(Type<NFTCollectionDisplay>()) {
-            if let v: MetadataViews.NFTCollectionDisplay = view as? NFTCollectionDisplay {
+        if let view = viewResolver.resolveView(Type<NFTCollectionDisplay>()) {
+            if let v = view as? NFTCollectionDisplay {
                 return v
             }
         }
@@ -644,8 +642,8 @@ pub contract MetadataViews {
     /// @return A optional Rarity struct
     ///
     pub fun getRarity(_ viewResolver: &{Resolver}) : Rarity? {
-        if let view: AnyStruct = viewResolver.resolveView(Type<Rarity>()) {
-            if let v: MetadataViews.Rarity = view as? Rarity {
+        if let view = viewResolver.resolveView(Type<Rarity>()) {
+            if let v = view as? Rarity {
                 return v
             }
         }
@@ -706,8 +704,8 @@ pub contract MetadataViews {
     /// @return A optional Traits struct
     ///
     pub fun getTraits(_ viewResolver: &{Resolver}) : Traits? {
-        if let view: AnyStruct = viewResolver.resolveView(Type<Traits>()) {
-            if let v: MetadataViews.Traits = view as? Traits {
+        if let view = viewResolver.resolveView(Type<Traits>()) {
+            if let v = view as? Traits {
                 return v
             }
         }
@@ -734,7 +732,7 @@ pub contract MetadataViews {
 
         let traits: [Trait] = []
         for k in dict.keys {
-            let trait: MetadataViews.Trait = Trait(name: k, value: dict[k]!, displayType: nil, rarity: nil)
+            let trait = Trait(name: k, value: dict[k]!, displayType: nil, rarity: nil)
             traits.append(trait)
         }
 

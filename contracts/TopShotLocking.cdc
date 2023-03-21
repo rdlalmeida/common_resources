@@ -1,5 +1,6 @@
-// import NonFungibleToken from 0xNFTADDRESS
+// import NonFungibleToken from 0x1d7e57aa55817448
 import NonFungibleToken from "./NonFungibleToken.cdc"
+
 pub contract TopShotLocking {
 
     // -----------------------------------------------------------------------
@@ -48,7 +49,7 @@ pub contract TopShotLocking {
     //
     // Returns: the NFT resource
     pub fun lockNFT(nft: @NonFungibleToken.NFT, duration: UFix64): @NonFungibleToken.NFT {
-        let TopShotNFTType: Type = CompositeType("A.TOPSHOTADDRESS.TopShot.NFT")!
+        let TopShotNFTType: Type = CompositeType("A.0b2a3299cc857e29.TopShot.NFT")!
         if !nft.isInstance(TopShotNFTType) {
             panic("NFT is not a TopShot NFT")
         }
@@ -58,7 +59,7 @@ pub contract TopShotLocking {
             return <- nft
         }
 
-        let expiryTimestamp: UFix64 = getCurrentBlock().timestamp + duration
+        let expiryTimestamp = getCurrentBlock().timestamp + duration
 
         self.lockedNFTs[nft.id] = expiryTimestamp
 
@@ -157,7 +158,7 @@ pub contract TopShotLocking {
         self.unlockableNFTs = {}
 
         // Create a single admin resource
-        let admin: @TopShotLocking.Admin <- create Admin()
+        let admin <- create Admin()
 
         // Store it in private account storage in `init` so only the admin can use it
         self.account.save(<-admin, to: /storage/TopShotLockingAdmin)
