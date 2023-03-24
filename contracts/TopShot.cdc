@@ -1678,3 +1678,4 @@ pub contract TopShot: NonFungibleToken {
         emit ContractInitialized()
     }
 }
+ 

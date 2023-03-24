@@ -72,112 +72,39 @@
 				"emulator": "0xf8d6e0586b0a20c7"
 			}
 		},
-		"Record": {
-			"source": "./Chapter1.0/Day1/contracts/Record.cdc",
+		"Flovatar": {
+			"source": "../common_resources/contracts/Flovatar.cdc",
 			"aliases": {
-				"emulator": "0xf8d6e0586b0a20c7"
+				"emulator": "0xf8d6e0586b0a20c7",
+				"mainnet": "0x921ea449dffec68a"
 			}
 		},
-		"Artist": {
-			"source": "./Chapter1.0/Day1/contracts/Artist.cdc",
+		"FlovatarComponentTemplate": {
+			"source": "../common_resources/contracts/FlovatarComponentTemplate.cdc",
 			"aliases": {
-				"emulator": "0xf8d6e0586b0a20c7"
+				"emulator": "0xf8d6e0586b0a20c7",
+				"mainnet": "0x921ea449dffec68a"
 			}
 		},
-		"FlowHotel": {
-			"source": "./Chapter1.0/Day2/contracts/FlowHotel.cdc",
+		"FlovatarComponent": {
+			"source": "../common_resources/contracts/FlovatarComponent.cdc",
 			"aliases": {
-				"emulator": "0xf8d6e0586b0a20c7"
+				"emulator": "0xf8d6e0586b0a20c7",
+				"mainnet": "0x921ea449dffec68a"
 			}
 		},
-		"ResourceTypes": {
-			"source": "./Chapter1.0/Day4/contracts/ResourceTypes.cdc",
+		"FlovatarPack": {
+			"source": "../common_resources/contracts/FlovatarPack.cdc",
 			"aliases": {
-				"emulator": "0xf8d6e0586b0a20c7"
+				"emulator": "0xf8d6e0586b0a20c7",
+				"mainnet": "0x921ea449dffec68a"
 			}
 		},
-		"ExampleNFTAccess": {
-			"source": "./Chapter2.0/Day1/contracts/ExampleNFTAccess.cdc",
+		"FlowUtilityToken": {
+			"source": "../common_resources/contracts/FlowUtilityToken.cdc",
 			"aliases": {
-				"emulator": "0xf8d6e0586b0a20c7"
-			}
-		},
-		"StandardSword": {
-			"source": "./Chapter2.0/Day2/contracts/StandardNFTInterface/StandardSword.cdc",
-			"aliases": {
-				"emulator": "0xf8d6e0586b0a20c7"
-			}
-		},
-		"StandardShield": {
-			"source": "./Chapter2.0/Day2/contracts/StandardNFTInterface/StandardShield.cdc",
-			"aliases": {
-				"emulator":"0xf8d6e0586b0a20c7"
-			}
-		},
-		"StandardBow": {
-			"source": "./Chapter2.0/Day2/contracts/StandardNFTInterface/StandardBow.cdc",
-			"aliases": {
-				"emulator": "0xf8d6e0586b0a20c7"
-			}
-		},
-		"StandardAdmin": {
-			"source": "./Chapter2.0/Day2/contracts/StandardNFTInterface/StandardAdmin.cdc",
-			"aliases": {
-				"emulator": "0xf8d6e0586b0a20c7"
-			}
-		},
-		"MyBow": {
-			"source": "./Chapter2.0/Day2/contracts/MyNewNFTInterface/MyBow.cdc",
-			"aliases": {
-				"emulator": "0xf8d6e0586b0a20c7"
-			}
-		},
-		"MyShield": {
-			"source": "./Chapter2.0/Day2/contracts/MyNewNFTInterface/MyShield.cdc",
-			"aliases": {
-				"emulator": "0xf8d6e0586b0a20c7"
-			}
-		},
-		"MySword": {
-			"source": "./Chapter2.0/Day2/contracts/MyNewNFTInterface/MySword.cdc",
-			"aliases": {
-				"emulator": "0xf8d6e0586b0a20c7"
-			}
-		},
-		"MyAdmin": {
-			"source": "./Chapter2.0/Day2/contracts/MyNewNFTInterface/MyAdmin.cdc",
-			"aliases": {
-				"emulator": "0xf8d6e0586b0a20c7"
-			}
-		},
-		"MyCollection": {
-			"source": "./Chapter2.0/Day2/contracts/MyNewNFTInterface/MyCollection.cdc",
-			"aliases": {
-				"emulator": "0xf8d6e0586b0a20c7"
-			}
-		},
-		"TestNFT": {
-			"source": "./Chapter2.0/Day2/contracts/TestNFT.cdc",
-			"aliases": {
-				"emulator": "0xf8d6e0586b0a20c7"
-			}
-		},
-		"TestAdmin": {
-			"source": "./Chapter2.0/Day2/contracts/TestAdmin.cdc",
-			"aliases": {
-				"emulator": "0xf8d6e0586b0a20c7"
-			}
-		},
-		"IPizza": {
-			"source": "./Chapter2.0/Day3/contracts/IPizza.cdc",
-			"aliases": {
-				"emulator": "0xf8d6e0586b0a20c7"
-			}
-		},
-		"Pizza": {
-			"source": "./Chapter2.0/Day3/contracts/Pizza.cdc",
-			"aliases": {
-				"emulator": "0xf8d6e0586b0a20c7"
+				"emulator": "0xf8d6e0586b0a20c7",
+				"mainnet": "0xead892083b3e2c6c"
 			}
 		}
 	},
@@ -236,19 +163,24 @@
 				"hashAlgorithm": "SHA3_256",
 				"privateKey": "90d183707a9c727e6c8ef230b751d4d3346611bb24ce625091678bb2aa22bbe3"
 			}
-		},
-		"blocto-mainnet-account": {
-			"address": "0x82dd07b1bcafd968"
-		},
-		"dapper-mainnet-account": {
-			"address": "0x37f3f5b3e0eaf6ca"
 		}
 	},
 	"deployments": {
 		"emulator": {
 			"emulator-account": [
-				"IPizza",
-				"Pizza"
+				"FlowToken", {
+					"name": "adminAccount",
+					"args": [
+						{"type": "AuthAccount", "value": "0xf8d6e0586b0a20c7"}
+					]
+				},
+				"FungibleToken",
+				"MetadataViews",
+				"NonFungibleToken",
+				"Flovatar",
+				"FlovatarComponent",
+				"FlovatarPack",
+				"FlowUtilityToken"
 			]
 		},
 		"testnet": {
